@@ -100,7 +100,7 @@ object Version {
   def get(head : String) : String = apply(head).id
 }
 
-object Test extends App{
+object Test{
   val e = new ExperimentDAO("test", "experiment")
 
   val p1 = Param("a", 1)
