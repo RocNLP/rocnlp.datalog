@@ -77,31 +77,37 @@ case class Version(@Key("_id") id : String, valid : Boolean = true, time : Long 
 object Version {
   val dao = new SalatDAO[Version, String](collection = MongoConnection()("meta")("versions")) {}
   import sys.process._
-  def apply() : String = {
+  def git() : String = {
     //You should commit and comment yourself so that you can invalidate experiments at will
     val add = "git add ." !
     val commit = "git commit -m \"testing\"" !
     val head = ("git rev-parse head" !!).stripLineEnd
+    apply(head).id
+  }
+
+  def apply(head : String) : Version = {
 
     dao.findOne(MongoDBObject("head" -> head)) match {
-      case Some(version) => head
+      case Some(version) => version
       case None => {
         val version = Version(head)
         dao.insert(version)
-        head
+        version
       }
     }
   }
+
+  def get(head : String) : String = apply(head).id
 }
 
-object Test {
+object Test extends App{
   val e = new ExperimentDAO("test", "experiment")
 
   val p1 = Param("a", 1)
   val p2 = Param("b", 2)
 
-  val exp = Experiment(Version(), "json2", Vector("someFeat"),Vector(p1, p2), 1,1,1)
-  val exp2 = Experiment(Version(), "semcor-json", Vector(),Vector(p1), 1,1,1)
+  val exp = Experiment(Version.git(), "json2", Vector("someFeat"),Vector(p1, p2), 1,1,1)
+  val exp2 = Experiment(Version.git(), "semcor-json", Vector(),Vector(p1), 1,1,1)
 
   e.insert(exp)
 
