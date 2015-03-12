@@ -49,9 +49,7 @@ object Test extends App {
   val p1 = Param("a", 1)
   val p2 = Param("b", 2)
 
-  val exp = Experiment("0.01", "semcor-json", Vector(),Vector(p1, p2), 1,1,1)
+  val exp = Experiment(Versioner(), "semcor-json", Vector(),Vector(p1, p2), 1,1,1)
 
   e.insert(exp)
-
-  println(Versioner())
 }
