@@ -94,8 +94,9 @@ object Test extends App {
   val exp = Experiment(Version(), "semcor-json", Vector(),Vector(p1, p2), 1,1,1)
   val exp2 = Experiment(Version(), "semcor-json", Vector(),Vector(p1), 1,1,1)
 
-  e.insert(exp)
-  e.insert(exp2)
+  //e.insert(exp)
+  //e.insert(exp2)
 
   e.byParams(Vector(p1)).foreach(println)
+  e.byDataset("semcor-json")
 }
