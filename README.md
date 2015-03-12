@@ -5,7 +5,7 @@ This is very personalized: help generalizing would be appreciated.
 
 ## Basic Usage:
 
-```
+```scala
 /* 
 Initialize your DAO.  new ExperimentDAO(mongoDBName, collectionName)
 I use the dbname as the project and the collection name for the method
