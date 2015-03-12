@@ -97,7 +97,7 @@ object Test extends App {
   //e.insert(exp)
   //e.insert(exp2)
 
-  e.byParams(Vector(p1)).foreach(println)
+  //e.byParams(Vector(p1)).foreach(println)
   println()
   e.byDataset("json")
 }
