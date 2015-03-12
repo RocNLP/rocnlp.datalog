@@ -42,7 +42,7 @@ class ExperimentDAO(db : String, coll : String) {
     dao.find(query).toList
   }
   def byParams(params : Vector[Param]) : List[Experiment] = dao.find("parameters" $all params.map(grater[Param].asDBObject(_))).toList
-  def byDataset(dataset : String) : List[Experiment] = dao.find(MongoDBObject("dataset" -> grater[String].asDBObject(dataset))).toList
+  def byDataset(dataset : String) : List[Experiment] = dao.find(MongoDBObject("dataset" -> dataset)).toList
   def byVersion(version : String) : List[Experiment] = dao.find(MongoDBObject("version" -> version)).toList
 
   private def best(experiments : List[Experiment]) : Experiment = {
@@ -98,6 +98,5 @@ object Test extends App {
   //e.insert(exp2)
 
   //e.byParams(Vector(p1)).foreach(println)
-  println()
-  e.byDataset("json")
+  println(e.byDataset("json"))
 }
