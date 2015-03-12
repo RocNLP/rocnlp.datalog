@@ -35,6 +35,25 @@ class ExperimentDAO(db : String, coll : String) {
       case None => dao.insert(experiment)
     }
   }
+
+  //Only includes features for now
+  def byFeatures(features : Vector[String]) : List[Experiment] = {
+    val query = ("features" $all features)
+    dao.find(query).toList
+  }
+  def byParams(params : Vector[Param]) : List[Experiment] = dao.find("parameters" $all params).toList
+  def byDataset(dataset : String) : List[Experiment] = dao.find(MongoDBObject("dataset" -> dataset)).toList
+  def byVersion(version : String) : List[Experiment] = dao.find(MongoDBObject("version" -> version)).toList
+
+  private def best(experiments : List[Experiment]) : Experiment = {
+    experiments.maxBy(e => (e.correct*1.0)/e.tagged)
+  }
+
+  def dumpCSV = {
+
+  }
+
+
 }
 
 /**
@@ -50,6 +69,7 @@ object Version {
   val dao = new SalatDAO[Version, String](collection = MongoConnection()("meta")("versions")) {}
   import sys.process._
   def apply() : String = {
+    //You should commit and comment yourself so that you can invalidate experiments at will
     val add = "git add ." !
     val commit = "git commit -m \"testing\"" !
     val head = "git rev-parse head" !!
@@ -72,6 +92,10 @@ object Test extends App {
   val p2 = Param("b", 2)
 
   val exp = Experiment(Version(), "semcor-json", Vector(),Vector(p1, p2), 1,1,1)
+  val exp2 = Experiment(Version(), "semcor-json", Vector(),Vector(p1), 1,1,1)
 
   e.insert(exp)
+  e.insert(exp2)
+
+  e.byParams(Vector(p1)).foreach(println)
 }
