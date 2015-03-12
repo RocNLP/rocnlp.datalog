@@ -90,7 +90,7 @@ object Version {
     dao.findOne(MongoDBObject("head" -> head)) match {
       case Some(version) => version
       case None => {
-        val version = Version(head)
+        val version = Version(head, true, System.currentTimeMillis())
         dao.insert(version)
         version
       }
