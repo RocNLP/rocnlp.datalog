@@ -99,4 +99,6 @@ object Test extends App {
 
   //e.byParams(Vector(p1)).foreach(println)
   println(e.byDataset("json"))
+
+  println(e.byFeatures(Vector("someFeat")))
 }
