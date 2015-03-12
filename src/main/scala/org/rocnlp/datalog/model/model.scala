@@ -37,23 +37,32 @@ class ExperimentDAO(db : String, coll : String) {
   }
 
   //Only includes features for now
-  def byFeatures(features : Vector[String]) : List[Experiment] = {
+  def byFeatures(features : Vector[String], only : Boolean = false) : List[Experiment] = {
+
+    val onlyQ = ("features" $size features.size)
     val query = ("features" $all features)
-    dao.find(query).toList
+    if (only) {
+      dao.find(query ++ onlyQ).toList
+    }
+    else dao.find(query).toList
   }
-  def byParams(params : Vector[Param]) : List[Experiment] = dao.find("parameters" $all params.map(grater[Param].asDBObject(_))).toList
+  def byParams(params : Vector[Param], only : Boolean = false) : List[Experiment] = {
+
+    val onlyQ = ("params" $size params.size)
+    val query = ("parameters" $all params.map(grater[Param].asDBObject(_)))
+
+    if (only) {
+      dao.find(query ++ onlyQ).toList
+    } else {
+      dao.find(query).toList
+    }
+  }
   def byDataset(dataset : String) : List[Experiment] = dao.find(MongoDBObject("dataset" -> dataset)).toList
   def byVersion(version : String) : List[Experiment] = dao.find(MongoDBObject("version" -> version)).toList
 
   private def best(experiments : List[Experiment]) : Experiment = {
     experiments.maxBy(e => (e.correct*1.0)/e.tagged)
   }
-
-  def dumpCSV = {
-
-  }
-
-
 }
 
 /**
@@ -72,7 +81,7 @@ object Version {
     //You should commit and comment yourself so that you can invalidate experiments at will
     val add = "git add ." !
     val commit = "git commit -m \"testing\"" !
-    val head = "git rev-parse head" !!
+    val head = ("git rev-parse head" !!).stripLineEnd
 
     dao.findOne(MongoDBObject("head" -> head)) match {
       case Some(version) => head
@@ -85,7 +94,7 @@ object Version {
   }
 }
 
-object Test extends App {
+object Test {
   val e = new ExperimentDAO("test", "experiment")
 
   val p1 = Param("a", 1)
@@ -95,10 +104,6 @@ object Test extends App {
   val exp2 = Experiment(Version(), "semcor-json", Vector(),Vector(p1), 1,1,1)
 
   e.insert(exp)
-  //e.insert(exp2)
-
-  //e.byParams(Vector(p1)).foreach(println)
-  //println(e.byDataset("json"))
 
   println(e.byFeatures(Vector("someFeat")))
 }
