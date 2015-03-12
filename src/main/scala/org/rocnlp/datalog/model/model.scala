@@ -35,8 +35,14 @@ object Experiment {
 object Versioner {
   import sys.process._
   def apply(branch : String = "testing") : String = {
+    val stash = "git stash" !
     val checkoutBranch = "git checkout -b %s".format(branch) !
-    val addAll = ""
+    val pop = "git stash pop" !
+    val add = "git add ." !
+    val commit = "git commit -m \"testing\"" !
+    val head = "git rev-parse head" !!
+
+    head
   }
 }
 
@@ -49,4 +55,6 @@ object Test extends App {
   val exp = Experiment("0.01", "semcor-json", Vector(),Vector(p1, p2), 1,1,1)
 
   e.insert(exp)
+
+  Versioner("my-test")
 }
