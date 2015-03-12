@@ -41,7 +41,7 @@ class ExperimentDAO(db : String, coll : String) {
     val query = ("features" $all features)
     dao.find(query).toList
   }
-  def byParams(params : Vector[Param]) : List[Experiment] = dao.find("parameters" $all params).toList
+  def byParams(params : Vector[Param]) : List[Experiment] = dao.find("parameters" $all params.map(grater[Param].asDBObject(_))).toList
   def byDataset(dataset : String) : List[Experiment] = dao.find(MongoDBObject("dataset" -> dataset)).toList
   def byVersion(version : String) : List[Experiment] = dao.find(MongoDBObject("version" -> version)).toList
 
